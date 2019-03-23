@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">AbigagQuiz</string>
+    <string name="title_activity_question">QuestionActivity</string>
+
+    <string-array name="spieler">
+        <item>Spieler 1</item>
+        <item>Spieler 2</item>
+    </string-array>
+</resources>
