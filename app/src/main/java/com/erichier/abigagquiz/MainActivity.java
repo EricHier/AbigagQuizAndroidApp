@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+    SharedPreferences.Editor editor = preferences.edit();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,12 +26,12 @@ public class MainActivity extends AppCompatActivity {
         final Spinner spieler = findViewById(R.id.spinner);
         final Switch buzzer = findViewById(R.id.buzzer);
 
+        editText.setText(preferences.getString("IP", ""));
+
         Button btn = findViewById(R.id.btnsend);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("IP", editText.getText().toString());
                 editor.putLong("Spieler", spieler.getSelectedItemId());
                 editor.putBoolean("Buzzer", buzzer.isChecked());
