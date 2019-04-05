@@ -12,6 +12,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.Switch;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,35 +26,40 @@ public class QuestionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         final SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(QuestionActivity.this);
 
-        if (pm.getBoolean("Buzzer", true)) {
+        setContentView(R.layout.activity_question);
+        final Button btn[] = {findViewById(R.id.answ1), findViewById(R.id.answ2), findViewById(R.id.answ3), findViewById(R.id.answ4)};
+        final Switch s = findViewById(R.id.buzzer);
+        TextView notes = findViewById(R.id.notes);
+        notes.setText("Spieler " + (pm.getLong("Spieler", -1) + 1) + " | IP: " + pm.getString("IP", "-"));
 
-            setContentView(R.layout.activity_question_buzzer);
-            final Button btn = findViewById(R.id.Buzzer);
-            TextView notes = findViewById(R.id.notes);
-            notes.setText("Spieler " + (pm.getLong("Spieler", -1) + 1) + " | IP: " + pm.getString("IP", "-"));
-
-            btn.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        UDP_Client client = new UDP_Client(getApplicationContext());
-                        client.Message = "P" + pm.getLong("Spieler", -1) + "|" + "A0";
-                        client.NachrichtSenden();
-                    }
-                    return true;
+        s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    btn[1].setVisibility(View.GONE);
+                    btn[2].setVisibility(View.GONE);
+                    btn[3].setVisibility(View.GONE);
+                    LinearLayout.LayoutParams parms = (LinearLayout.LayoutParams) btn[0].getLayoutParams();
+                    parms.weight = 900f;
+                    btn[0].setLayoutParams(parms);
+                    btn[0].setText("Buzzer");
+                } else {
+                    btn[1].setVisibility(View.VISIBLE);
+                    btn[2].setVisibility(View.VISIBLE);
+                    btn[3].setVisibility(View.VISIBLE);
+                    LinearLayout.LayoutParams parms = (LinearLayout.LayoutParams) btn[0].getLayoutParams();
+                    parms.weight = 225f;
+                    btn[0].setLayoutParams(parms);
+                    btn[0].setText("Antwort 1");
                 }
-            });
-        } else {
+            }
+        });
 
-            setContentView(R.layout.activity_question);
-            Button btn[] = {findViewById(R.id.answ1), findViewById(R.id.answ2), findViewById(R.id.answ3), findViewById(R.id.answ4)};
-            TextView notes = findViewById(R.id.notes);
-            notes.setText("Spieler " + (pm.getLong("Spieler", -1) + 1) + " | IP: " + pm.getString("IP", "-"));
-
-            for (final Button b : btn) {
-                b.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
+        for (final Button b : btn) {
+            b.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (!s.isChecked()) {
                         UDP_Client client = new UDP_Client(getApplicationContext());
                         client.Message = "P" + pm.getLong("Spieler", -1) + "|" + "A" + (Integer.parseInt(b.getText().toString().replace("Antwort ", "")) - 1);
                         client.NachrichtSenden();
@@ -62,11 +71,23 @@ public class QuestionActivity extends AppCompatActivity {
                                 b.getBackground().clearColorFilter();
                             }
                         }).start();
-                        return false;
                     }
-                });
-            }
+                    return false;
+                }
+            });
         }
+
+        btn[0].setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (s.isChecked() && event.getAction() == MotionEvent.ACTION_DOWN) {
+                    UDP_Client client = new UDP_Client(getApplicationContext());
+                    client.Message = "P" + pm.getLong("Spieler", -1) + "|" + "A0";
+                    client.NachrichtSenden();
+                }
+                return false;
+            }
+        });
 
         hideSystemUI();
 

@@ -31,14 +31,6 @@
         android:entries="@array/spieler"
         android:layout_weight="1" />
 
-    <Switch
-        android:id="@+id/buzzer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_weight="1"
-        android:text="Buzzer-Mode" />
-
     <Button
         android:id="@+id/btnsend"
         android:layout_width="match_parent"
