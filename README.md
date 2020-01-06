@@ -1,4 +1,4 @@
-# AbigagQuizAndroidApp
+# Abigag Quiz Android App
 Android application as a quiz input device for the associated python desktop program.
 
 With this software you can take local quiz shows without needing an internet connection. For this, the PC with the desktop software must be in the same LAN so that both can communicate with each other via UDP packets.
